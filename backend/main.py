@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
 from models.upload import UploadRequest
 from services.s3_service import s3
 
+import re
 import os
 
 app = FastAPI(
@@ -13,11 +13,15 @@ app = FastAPI(
 # CORS para React
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["*"],
 )
+
+MAX_FILE_SIZE = 18 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = [
     ".docx",
@@ -63,7 +67,18 @@ def get_presigned_url(data: UploadRequest):
             detail="Tipo de archivo no permitido"
         )
 
-    safe_name = data.fileName.strip()
+    if data.fileSize > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=400,
+            detail="El archivo supera los 18 MB permitidos"
+        )
+
+    # Sanitizar nombre del archivo
+    safe_name = re.sub(
+        r"[^a-zA-Z0-9._-]",
+        "_",
+        data.fileName.strip()
+    )
 
     key = f"uploads/{safe_name}"
 
@@ -91,9 +106,11 @@ def list_files():
         Prefix="uploads/"
     )
 
+    contents = response.get("Contents", [])
+
     files = []
 
-    for obj in response.get("Contents", []):
+    for obj in contents:
 
         url = s3.generate_presigned_url(
             "get_object",

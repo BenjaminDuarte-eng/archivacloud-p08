@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
   const [archivo, setArchivo] = useState(null);
@@ -145,39 +146,26 @@ function App() {
   );
 
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: "1100px",
-        backgroundColor: "#0f172a",
-        color: "white",
-        padding: "30px",
-        borderRadius: "15px",
-      }}
-    >
-      <h1>📁 ArchivaCloud P-08</h1>
+    <div className="app-container">
+      
+    
+      <div className="header-card">
+        <h1 className="header-title">
+         📁 ArchivaCloud P-08
+       </h1>
+
+       <p className="header-subtitle">
+        Sistema de Gestión Documental AWS S3
+      </p>
+    </div>
 
       <hr />
 
-      <h2
-        style={{
-          marginTop: "20px",
-          marginBottom: "20px",
-        }}
-      >
+      <h2 className="section-title">
         Subir archivo
       </h2>
 
-      <label
-        style={{
-          backgroundColor: "#1f2937",
-          padding: "15px",
-          borderRadius: "10px",
-          cursor: "pointer",
-          display: "inline-block",
-          border: "1px solid #10b981",
-        }}
-      >
+      <label className="file-selector">
         📄 Seleccionar DOCX o PPTX
 
         <input
@@ -202,14 +190,7 @@ function App() {
 
       <button
         onClick={subirArchivo}
-        style={{
-          backgroundColor: "#10b981",
-          color: "white",
-          border: "none",
-          padding: "12px 20px",
-          borderRadius: "8px",
-          cursor: "pointer",
-        }}
+        className="action-button"
       >
         Subir archivo
       </button>
@@ -231,18 +212,11 @@ function App() {
         }}
       />
 
-      <h2>Archivos almacenados</h2>
+      <h2 className="section-title">
+        Archivos almacenados
+      </h2>
 
-      <div
-        style={{
-          marginTop: "20px",
-          marginBottom: "20px",
-          display: "flex",
-          justifyContent: "center",
-          gap: "10px",
-          flexWrap: "wrap",
-        }}
-      >
+      <div className="toolbar">
         <button
           onClick={() =>
             setCriterioOrden("nombre")
@@ -316,82 +290,42 @@ function App() {
         archivosOrdenados.map((item) => (
           <div
             key={item.key}
-            style={{
-              backgroundColor: "#1f2937",
-              padding: "20px",
-              marginBottom: "15px",
-              borderRadius: "10px",
-            }}
+            className="file-card"
           >
-            <h3>
-              📄{" "}
-              {item.key.replace(
-                "uploads/",
-                ""
-              )}
-            </h3>
-
-            <p>
-              Tamaño:
-              {" "}
-              {formatearTamano(item.size)}
-            </p>
-
-            <p>
-              Fecha:
-              {" "}
-              {formatearFecha(
-                item.lastModified
-              )}
-            </p>
-
-            <div
-              style={{
-                marginTop: "15px",
-                display: "flex",
-                justifyContent: "center",
-                gap: "10px",
-              }}
-            >
-              <button
-                onClick={() =>
-                  descargarArchivo(item.url)
-                }
-                style={{
-                  backgroundColor: "#2563eb",
-                  color: "white",
-                  border: "none",
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  width: "120px",
-                }}
-              >
-                Descargar
-              </button>
-
-              <button
-                onClick={() =>
-                  eliminarArchivo(item.key)
-                }
-                style={{
-                  backgroundColor: "#dc2626",
-                  color: "white",
-                  border: "none",
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  width: "120px",
-                }}
-              >
-                Eliminar
-              </button>
+            <div className="file-name">
+              📄 {item.key.replace("uploads/", "")}
             </div>
-          </div>
-        ))
-      )}
-    </div>
-  );
-}
+
+            <div className="file-info">
+              <span className="file-label">Tamaño:</span>{" "}
+              {formatearTamano(item.size)}
+            </div>
+
+            <div className="file-info">
+              <span className="file-label">Fecha:</span>{" "}
+              {formatearFecha(item.lastModified)}
+            </div>
+
+            <div className="acciones">
+              <button
+                className="btn-descargar"
+                onClick={() => descargarArchivo(item.url)}
+              >
+                ⬇ Descargar
+              </button>
+
+              <button
+                className="btn-eliminar"
+                onClick={() => eliminarArchivo(item.key)}
+              >
+              🗑 Eliminar
+             </button>
+             </div>
+             </div>
+             ))
+             )}
+             </div>
+            );
+            }
 
 export default App;
